@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.robusta.photoweather.R;
@@ -289,12 +291,14 @@ public class MainActivity extends AppCompatActivity implements MainContractor.Vi
         File file = new File(dirPath, System.currentTimeMillis() + "_weatherphoto.png");
         try {
             FileOutputStream fOut = new FileOutputStream(file);
-            getScreenShot(view).compress(Bitmap.CompressFormat.PNG, 85, fOut);
+            getScreenShot(view).compress(Bitmap.CompressFormat.PNG, 100, fOut);
             fOut.flush();
             fOut.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //---Share File---//
+        sharePhoto(getScreenShot(view));
     }
 
     private void cameraIntent() {
@@ -303,5 +307,28 @@ public class MainActivity extends AppCompatActivity implements MainContractor.Vi
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-    
+
+
+    // Share Photo with All Apps
+    private void sharePhoto(Bitmap bitmap) {
+        try {
+            File file = new File(this.getExternalCacheDir(), "sharedImg.png");
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+            file.setReadable(true, false);
+            final Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                    this,
+                    "com.robusta.photoweather.provider",file));
+            intent.setType("image/png");
+            startActivity(Intent.createChooser(intent, "Share Image"));
+        } catch (Exception e) {
+            Log.d(TAG, "sharePhoto: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }

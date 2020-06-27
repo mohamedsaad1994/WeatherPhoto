@@ -4,7 +4,7 @@
     <string name="picked_image">Picked Image</string>
     <string name="get_history">get history</string>
     <string name="add_to_history">Add to history</string>
-    <string name="enable_your_location">Please enable your location</string>
+    <string name="enable_your_location">Please enable your location for more accuracy</string>
     <string name="no_connection">No Internet connection !!</string>
     <string name="you_have_to_give_location_permission">You have to agree for location permission to preview your weather info</string>
     <string name="you_have_to_accept_cam_permission">You have to agree for camera permission to take a photo</string>
